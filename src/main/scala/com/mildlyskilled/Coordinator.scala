@@ -1,7 +1,6 @@
 package com.mildlyskilled
 
 import akka.actor.{Props, Actor}
-import akka.actor.Actor.Receive
 import akka.routing.RoundRobinPool
 
 /**
@@ -10,29 +9,28 @@ import akka.routing.RoundRobinPool
   * set method.
   */
 
-object Coordinator extends Actor{
+class Coordinator(scene: Scene, workers: Int, rowWidth: Int) extends Actor{
+
   def init(im: Image, of: String) = {
     image = im
     outfile = of
     waiting = im.width * im.height
   }
 
-  val workerRouter = context.actorOf(
-    Props[RenderNode].withRouter(RoundRobinPool(nrOfWorkers)), name = "workerRouter")
+  val nodeRouter = context.actorOf(
+    Props[RenderNode].withRouter(RoundRobinPool(workers)), name = "nodeRouter")
 
   def receive = {
-    case Calculate ⇒
-      for (i ← 0 until nrOfMessages) workerRouter ! Work(i * nrOfElements, nrOfElements)
+    case Render =>
+      for (i <- 0 until workers) nodeRouter ! Render(start, end) //send chunks of work to routers
 
-    case Result(value) ⇒
-      pi += value
-      nrOfResults += 1
-      if (nrOfResults == nrOfMessages) {
-        // Send the result to the listener
-        listener ! PiApproximation(pi, duration = (System.currentTimeMillis - start) millis)
-        // Stops this actor and all its supervised children
-        context stop self
-      }
+    case Result(list) =>
+      //add list to a whole image
+
+
+    case Stop =>
+
+
   }
 
   // Number of pixels we're waiting for to be set.
@@ -51,5 +49,4 @@ object Coordinator extends Actor{
     image.print(outfile)
   }
 
-  override def receive: Receive = ???
 }
