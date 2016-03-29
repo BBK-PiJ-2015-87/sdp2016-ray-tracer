@@ -45,6 +45,10 @@ class Scene private(val objects: List[Shape], val lights: List[Light]) {
   private def this(p: (List[Shape], List[Light])) = this(p._1, p._2)
 
   val t = new Trace
+
+  def getTrace() = {
+    t;
+  }
   val ambient = .2f
   val background = Colour.black
 
