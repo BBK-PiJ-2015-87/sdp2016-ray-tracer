@@ -40,20 +40,9 @@ object Scene {
   }
 }
 
-class Scene private(val objects: List[Shape], val lights: List[Light]) {
+class Scene private(val objects: List[Shape], val lights: List[Light], val camera: Camera, val settings: Trace) {
 
-  private def this(p: (List[Shape], List[Light])) = this(p._1, p._2)
-
-  val t = new Trace
-
-  def getTrace() = {
-    t;
-  }
-
-  val ambient = 0.2f
-  val background = Colour.black
-  val eye = Vector.origin
-  val angle = 90f
+  private def this(p: (List[Shape], List[Light])) = this(p._1, p._2, p._3)
 
 }
 

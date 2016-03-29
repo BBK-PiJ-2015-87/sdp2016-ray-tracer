@@ -4,6 +4,8 @@ class Trace {
   val AntiAliasingFactor = 4
   val Width = 800
   val Height = 600
+  val ambient = 0.2f
+  val background = Colour.black
 
   var rayCount = 0
   var hitCount = 0

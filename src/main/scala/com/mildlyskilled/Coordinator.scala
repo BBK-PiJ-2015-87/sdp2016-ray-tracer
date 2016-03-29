@@ -22,7 +22,7 @@ class Coordinator(scene: Scene, workers: Int, rowWidth: Int) extends Actor{
 
   def receive = {
     case Render =>
-      for (i <- 0 until workers) nodeRouter ! Render(start, end) //send chunks of work to routers
+      for (i <- 0 until workers) nodeRouter ! Render(start, end, scene) //send chunks of work to routers
 
     case Result(list) =>
       //add list to a whole image

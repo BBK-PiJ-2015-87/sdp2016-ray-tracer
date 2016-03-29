@@ -5,22 +5,22 @@ import akka.actor._
 import scala.collection.mutable.ListBuffer
 
 class RenderNode extends Actor {
+  var scene: Scene = null;
 
   def receive = {
-    case Render(start, rows) => sender ! Result(RenderRows(start, rows)) // perform the work
+    case Render(start, end, scene) => {
+      this.scene = scene
+      sender ! Result(RenderRows(start, end))
+    }
   }
 
-  def RenderRows(width: Int, height: Int, t: Trace, angle: Float): List[Pixel] = {
-      val frustum = (.5 * angle * math.Pi / 180).toFloat
-
-      val cosf = math.cos(frustum)
-      val sinf = math.sin(frustum)
+  def RenderRows(width: Int, height: Int): List[Pixel] = {
 
       // Anti-aliasing parameter -- divide each pixel into sub-pixels and
       // average the results to get smoother images.
       val ss = t.AntiAliasingFactor
 
-      var list:List[Pixel] = ListBuffer();
+      var list = new ListBuffer[Pixel]();
 
       // TODO:
       // Create a parallel version of this loop, creating one actor per pixel or per row of
@@ -53,7 +53,7 @@ class RenderNode extends Actor {
           if (Vector(colour.r, colour.g, colour.b).norm > 1)
             t.lightCount += 1
 
-          list :: new Pixel(x, y, colour)
+          list += new Pixel(x, y, colour)
         }
       }
 
